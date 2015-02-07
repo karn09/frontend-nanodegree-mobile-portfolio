@@ -1,0 +1,12 @@
+CACHE MANIFEST
+
+CACHE:
+index.html
+img/2048.png
+img/cam_be_like.jpg
+img/mobilewebdev.jpg
+img/profilepic.jpg
+views/images/pizzeria.jpg
+
+NETWORK:
+*
