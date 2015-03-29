@@ -363,26 +363,25 @@ var pizzaElementGenerator = function(i) {
       pizzaImage,                 // the pizza image itself
       pizzaDescriptionContainer,  // contains the pizza title and list of ingredients
       pizzaName,                  // the pizza name itself
-      ul,                         // the list of ingredients
-      createDiv = document.createElement("div");
+      ul;                         // the list of ingredients
   
   pizzaContainer  = document.createElement("div");
-  pizzaImageContainer = createDiv;
+  pizzaImageContainer = document.createElement("div");
   pizzaImage = document.createElement("img");
-  pizzaDescriptionContainer = createDiv;
-
+  pizzaDescriptionContainer = document.createElement("div");
+  
   pizzaContainer.classList.add("randomPizzaContainer");
-  pizzaContainer.style.width = "33.33%";
-  pizzaContainer.style.height = "325px";
+  //pizzaContainer.style.width = "33.33%";
+  //pizzaContainer.style.height = "325px";
   pizzaContainer.id = "pizza" + i;                // gives each pizza element a unique id
   pizzaImageContainer.classList.add("col-md-6");
-
+  
   pizzaImage.src = "images/pizza.png";
   pizzaImage.classList.add("img-responsive");
   pizzaImageContainer.appendChild(pizzaImage);
   pizzaContainer.appendChild(pizzaImageContainer);
 
-
+  
   pizzaDescriptionContainer.classList.add("col-md-6");
 
   pizzaName = document.createElement("h4");
@@ -406,13 +405,13 @@ var resizePizzas = function(size) {
     var pizzaSize = null
     switch(size) {
       case "1":
-        document.querySelector("#pizzaSize").innerHTML = "Small";
+        document.getElementById("pizzaSize").innerHTML = "Small"; // changed from querySelector to getElementById, much faster as per jsPerf
         return;
       case "2":
-        document.querySelector("#pizzaSize").innerHTML = "Medium";
+        document.getElementById("pizzaSize").innerHTML = "Medium";
         return;
       case "3":
-        document.querySelector("#pizzaSize").innerHTML = "Large";
+        document.getElementById("pizzaSize").innerHTML = "Large";
         return;
       default:
         console.log("bug in changeSliderLabel");
@@ -424,7 +423,7 @@ var resizePizzas = function(size) {
   // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
   function determineDx (elem, size) {
     var oldwidth = elem.offsetWidth;
-    var windowwidth = document.querySelector("#randomPizzas").offsetWidth;
+    var windowwidth = document.getElementById("randomPizzas").offsetWidth; // changed from querySelector
     var oldsize = oldwidth / windowwidth;
 
     // TODO: change to 3 sizes? no more xl?
@@ -450,12 +449,11 @@ var resizePizzas = function(size) {
 
   // Iterates through pizza elements on the page and changes their widths
   function changePizzaSizes(size) {
-    var pizzaContainers = document.querySelectorAll(".randomPizzaContainer");
+    var pizzaContainers = document.getElementsByClassName("randomPizzaContainer"); // changed from querySelectorAll to getElementsByClassName for speed
     var pizzaContainerSize = pizzaContainers.length;
     var dx = determineDx(pizzaContainers[0], size);
     var newwidth = (pizzaContainers[0].offsetWidth + dx) + 'px';
     for (var i = 0; i < pizzaContainerSize; i++) {
-
       pizzaContainers[i].style.width = newwidth;
     }
   }
@@ -472,8 +470,8 @@ var resizePizzas = function(size) {
 window.performance.mark("mark_start_generating"); // collect timing data
 
 // This for-loop actually creates and appends all of the pizzas when the page loads
+var pizzasDiv = document.getElementById("randomPizzas");
 for (var i = 2; i < 100; i++) {
-  var pizzasDiv = document.getElementById("randomPizzas");
   pizzasDiv.appendChild(pizzaElementGenerator(i));
 }
 
@@ -492,7 +490,7 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
   var numberOfEntries = times.length;
   var sum = 0;
   for (var i = numberOfEntries - 1; i > numberOfEntries - 11; i--) {
-    sum = sum + times[i].duration;
+    sum += times[i].duration;
   }
   console.log("Average time to generate last 10 frames: " + sum / 10 + "ms");
 }
@@ -501,19 +499,23 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
 // https://www.igvita.com/slides/2012/devtools-tips-and-tricks/jank-demo.html
 
 // Moves the sliding background pizzas based on scroll position
+
 function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
-
-  var items = document.querySelectorAll('.mover');
-  var itemsLength = items.length;
   // moved scrollTop look up out of loop. Each scroll event is triggering loop once, scrollTop stays static. 
+  
+  var items = document.getElementsByClassName('mover'); // changed to getElementsByClassName, according to jsPerf - this is faster than querySelectorAll
+  var itemsLength = items.length;
   var scrollTop = document.body.scrollTop;
-  for (var i = 0; i < itemsLength; i++) {
-    var phase = Math.sin((scrollTop / 1250) + (i % 5));
-//    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
-    items[i].style.transform = 'translateX(' + (100*phase) + 'px)';
-  }
+  var phaseInt = scrollTop / 1250;
+    
+  
+  for (var i = 0; i < itemsLength; i++) {    
+     //items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
+     var phase = (Math.sin(phaseInt + i % 5) * 100);
+     items[i].style.transform = 'translateX(' + phase + 'px)';
+   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
   // Super easy to create custom metrics.
@@ -524,23 +526,29 @@ function updatePositions() {
     logAverageFrame(timesToUpdatePosition);
   }
 }
+// buffer updatePositions with requestAnimationFrame
+function requestScroll () {
+    window.requestAnimationFrame(updatePositions);
+}
 
-// runs updatePositions on scroll
-window.addEventListener('scroll', updatePositions);
+
+// runs requestScroll on scroll
+window.addEventListener('scroll', requestScroll);
 
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
-  for (var i = 0; i < 200; i++) {
+  var movingPizzas = document.getElementById("movingPizzas1");  // changed from QuerySelectorAll, getElementById is faster according to jsPerf.
+  for (var i = 0; i < 100; i++) {
     var elem = document.createElement('img');
-    elem.className = 'mover';
+    elem.classList.add('mover'); // changed from className - according to Paul Irish blog, classList.add is faster. 
     elem.src = "images/pizza.png";
-    elem.style.height = "100px";
-    elem.style.width = "73.333px";
     elem.style.left = (i % cols) * s + 'px';
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
-    document.querySelector("#movingPizzas1").appendChild(elem);
+    movingPizzas.appendChild(elem);
   }
-  updatePositions();
+  //window.requestAnimationFrame(requestScroll); // removed, no need to potentially call this twice on load
 });
+
+
