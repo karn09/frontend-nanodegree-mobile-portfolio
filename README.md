@@ -1,8 +1,14 @@
 ## Website Performance Optimization portfolio project
 
-Your challenge, if you wish to accept it (and we sure hope you will), is to optimize this online portfolio for speed! In particular, optimize the critical rendering path and make this page render as quickly as possible by applying the techniques you've picked up in the [Critical Rendering Path course](https://www.udacity.com/course/ud884).
+Achieved PageSpeed score of 97 on Desktop, 95 for mobile.
 
-To get started, check out the repository, inspect the code,
+On pizza page, achieved following times:
+
+* Time to generate pizzas on load: 30.490999983157963ms
+* Average time to generate last 10 frames: 0.9403000061865896ms
+* Average time to generate last 10 frames: 0.4499999980907887ms
+* Time to resize pizzas: 1.0460000485181808ms
+
 
 
 ## Optimizations made to /view/js/main.js
