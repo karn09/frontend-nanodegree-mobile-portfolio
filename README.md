@@ -4,10 +4,10 @@ Achieved PageSpeed score of 97 on Desktop, 95 for mobile.
 
 On pizza page, achieved following times:
 
-* Time to generate pizzas on load: 30.490999983157963ms
-* Average time to generate last 10 frames: 0.9403000061865896ms
-* Average time to generate last 10 frames: 0.4499999980907887ms
-* Time to resize pizzas: 1.0460000485181808ms
+* Time to generate pizzas on load: 18.79699999699369ms
+* Average time to generate last 10 frames: 0.6218999973498285ms
+* Average time to generate last 10 frames: 0.5201999796554446ms
+* Average time to generate last 10 frames: 0.31919999164529145ms
 
 
 
