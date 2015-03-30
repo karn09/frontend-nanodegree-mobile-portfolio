@@ -11,7 +11,7 @@ On pizza page, achieved following times:
 
 
 
-## Optimizations made to /view/js/main.js
+## Optimizations made to /view/js/pizza.js
 * Moved variables outside of loops in instances where definition stays constant on page load. 
 
 * Cached lengths of arrays outside of loops.
@@ -27,6 +27,9 @@ On pizza page, achieved following times:
 
 * moved variables that search DOM for elements outside of loops
 
+* Create fragments to append modified elements to document, [Speed up JavaScript](http://www.nczonline.net/blog/2009/02/03/speed-up-your-javascript-part-4/)
+
+* used on scroll, call requestScroll, which calls updatePositions via requestAnimationFrame. 
 
 ## Using Grunt to automate build 
 #### Following Grunt modules used:

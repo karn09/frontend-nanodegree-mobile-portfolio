@@ -456,6 +456,7 @@ var resizePizzas = function(size) {
     for (var i = 0; i < pizzaContainerSize; i++) {
       pizzaContainers[i].style.width = newwidth;
     }
+    //document.styleSheets[0].insertRule(".randomPizzaContainer { width: "+ newwidth + "}");
   }
 
   changePizzaSizes(size);
@@ -503,19 +504,15 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
 function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
-  // moved scrollTop look up out of loop. Each scroll event is triggering loop once, scrollTop stays static. 
-  
   var items = document.getElementsByClassName('mover'); // changed to getElementsByClassName, according to jsPerf - this is faster than querySelectorAll
   var itemsLength = items.length;
   var scrollTop = document.body.scrollTop;
   var phaseInt = scrollTop / 1250;
-    
   
-  for (var i = 0; i < itemsLength; i++) {    
-     //items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
-     var phase = (Math.sin(phaseInt + i % 5) * 100);
-     items[i].style.transform = 'translateX(' + phase + 'px)';
-   }
+  for (var i = 0; i < itemsLength; i++) {
+    var phase = Math.sin(phaseInt + (i % 5)) * 100;
+    items[i].style.transform = 'translate3d(' + phase + 'px, 0, 0)';
+  }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
   // Super easy to create custom metrics.
@@ -525,6 +522,7 @@ function updatePositions() {
     var timesToUpdatePosition = window.performance.getEntriesByName("measure_frame_duration");
     logAverageFrame(timesToUpdatePosition);
   }
+  
 }
 // buffer updatePositions with requestAnimationFrame
 function requestScroll () {
@@ -540,15 +538,16 @@ document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
   var movingPizzas = document.getElementById("movingPizzas1");  // changed from QuerySelectorAll, getElementById is faster according to jsPerf.
-  for (var i = 0; i < 100; i++) {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < 32; i++) {
     var elem = document.createElement('img');
     elem.classList.add('mover'); // changed from className - according to Paul Irish blog, classList.add is faster. 
     elem.src = "images/pizza.png";
     elem.style.left = (i % cols) * s + 'px';
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
-    movingPizzas.appendChild(elem);
+    fragment.appendChild(elem);
   }
+  movingPizzas.appendChild(fragment)
   //window.requestAnimationFrame(requestScroll); // removed, no need to potentially call this twice on load
 });
-
 
