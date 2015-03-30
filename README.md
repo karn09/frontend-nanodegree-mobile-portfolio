@@ -31,6 +31,8 @@ On pizza page, achieved following times:
 
 * used on scroll, call requestScroll, which calls updatePositions via requestAnimationFrame. 
 
+* use **transform3d** on line 514 and **backface-visibility: hidden;** in style.css to force GPU painting of pizzas. as per [translate3d](http://davidwalsh.name/translate3d)
+
 ## Using Grunt to automate build 
 #### Following Grunt modules used:
 * imagemin
